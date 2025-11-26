@@ -2,6 +2,8 @@ package com.example.tiktokexperience;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +14,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.tiktokexperience.Adapter.ItemAdapter;
 import com.example.tiktokexperience.Bean.PostItem;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;      //下拉刷新
+    private TextView tvHeader; // 顶部标题
 
     private ItemAdapter adapter;
     private List<PostItem> dataList = new ArrayList<>();
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         recyclerView = findViewById(R.id.recyclerView);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        tvHeader = findViewById(R.id.tvHeader);
 
         // === 核心：设置双列瀑布流布局 ===
         StaggeredGridLayoutManager layoutManager =
@@ -95,53 +98,82 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 布局切换按钮点击事件
-      //  fabSwitchLayout.setOnClickListener(v -> {
-         //   isStaggered = !isStaggered; // 切换状态
-         //   setLayoutManager();
-          //  adapter.notifyDataSetChanged(); // 重新绑定视图以适应新布局
-       // });
+        // 顶部标题点击事件 - 切换布局
+        tvHeader.setOnClickListener(v -> {
+            isStaggered = !isStaggered; // 切换状态
+            setLayoutManager();
+            adapter.notifyDataSetChanged(); // 重新绑定视图以适应新布局
+
+            // 更新标题文本显示当前布局状态
+//            String layoutText = isStaggered ? "经验 · 瀑布流" : "经验 · 单列";
+//            tvHeader.setText(layoutText);
+        });
     }
 
     private void initData() {
         adapter.refreshData(generateMockData(20, 0));
+
     }
 
     // 生成 Mock 数据 (必须保证 ID 稳定，以便测试持久化)
+    // 生成 Mock 数据 (使用 Picsum 生成无限不重复图片)
+// 生成 Mock 数据 (中国大陆专用版)
     private List<PostItem> generateMockData(int count, int startIndex) {
         List<PostItem> list = new ArrayList<>();
         Random random = new Random();
 
-        String[] imageUrls = {
-                "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&q=80",
-                "https://images.unsplash.com/photo-1539683255143-d456bf564b72?w=500&q=80",
-                "https://images.unsplash.com/photo-1481349518771-20055b2a7b24?w=500&q=80",
-                "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&q=80"
-        };
         String[] titles = {
                 "上海看展｜这个展真的太好拍了！",
                 "今日份OOTD，显瘦穿搭分享",
                 "沉浸式护肤，又是精致的一天",
                 "猫咪迷惑行为大赏 #萌宠",
-                "家常菜做法，简单又好吃"
+                "家常菜做法，简单又好吃",
+                "深圳周末去哪儿？小众打卡地",
+                "这是什么神仙颜值！爱了爱了",
+                "打工人日常，今天也要加油鸭",
+                "数码博主：iPhone 19 爆料汇总",
+                "旅行 Vlog | 去有风的地方"
         };
 
         for (int i = 0; i < count; i++) {
             int realIndex = startIndex + i;
-            // ID 使用 "post_" + 索引，确保重启 App 后 ID 一致，从而能读取到 SP 中的状态
+            // ID 用于持久化点赞状态
             String id = "post_" + realIndex;
 
-            // 为了视觉效果，随机取图和标题，但在真实项目中应由 ID 决定内容
-            String img = imageUrls[random.nextInt(imageUrls.length)];
+            // 1. 头像：使用腾讯 QQ 头像接口
+            // 技巧：通过改变 'nk' 参数(QQ号)来获取不同的头像，国内访问极快
+            // 这里随机生成一个 9 位数的 QQ 号
+            String qqNum = String.valueOf(100000000 + random.nextInt(899999999));
+            String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + qqNum + "&s=100";
+
+            // 2. 主图：使用国内随机壁纸 API
+            // 技巧：必须在 URL 后拼接 "&v={唯一ID}"
+            // 作用：
+            // (1) 防止 Glide 缓存：Glide 看到 URL 不同，会发起新请求
+            // (2) 获取新图：服务器收到新请求，随机返回一张不同的图
+
+            // 接口A (风景/动漫，速度快): https://api.vvhan.com/api/wallpaper/acg?type=image
+            // 接口B (手机竖屏壁纸): https://api.btstu.cn/sjbz/api.php?method=mobile&format=images
+
+            // 我们这里混合使用，模拟不同比例：
+            String imageUrl;
+            if (i % 2 == 0) {
+                // 偶数个用 动漫/风景 (横屏或方图居多)
+                imageUrl = "https://api.btstu.cn/sjbz/api.php?lx=dongman&v=" + realIndex;
+            } else {
+                // 奇数个用 手机壁纸 (竖屏，适合瀑布流)
+                imageUrl = "https://api.btstu.cn/sjbz/api.php?method=mobile&format=images&v=" + realIndex;
+            }
+
             String title = titles[random.nextInt(titles.length)];
 
             list.add(new PostItem(
                     id,
-                    img,
+                    imageUrl,
                     title,
-                    "https://i.pravatar.cc/150?u=" + id, // 根据 ID 生成头像
-                    "用户_" + realIndex,
-                    100 + realIndex // 基础点赞数
+                    avatarUrl,
+                    "用户_" + qqNum.substring(0, 4), // 模拟用户名
+                    random.nextInt(2000) + 50 // 随机点赞数
             ));
         }
         return list;

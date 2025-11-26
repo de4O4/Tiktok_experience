@@ -5,19 +5,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#161622">
+    android:background="@color/background_color">
 
     <!-- 1. 顶部标题 -->
     <TextView
         android:id="@+id/tvHeader"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="56dp"
         android:text="经验 · 推荐"
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:background="#161622"
+        android:background="@color/primary_color"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <!-- 2. 下拉刷新列表 -->

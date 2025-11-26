@@ -5,15 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardBackgroundColor="#2B2B35"
-    app:cardElevation="0dp">
+    android:layout_margin="6dp"
+    app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="@color/card_background"
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="12dp">
+        android:paddingBottom="16dp">
 
         <!--
              核心：adjustViewBounds="true" 允许ImageView根据图片
@@ -33,11 +33,12 @@
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginHorizontal="12dp"
             android:text="这是一个标题示例，可能会很长换行..."
             android:textColor="#FFFFFF"
-            android:textSize="14sp"
+            android:textSize="15sp"
+            android:textStyle="bold"
             android:maxLines="2"
             android:ellipsize="end"
             app:layout_constraintTop_toBottomOf="@id/ivPostImage"/>
@@ -48,15 +49,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="8dp"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="12dp"
             app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
             <!-- 用户头像 (圆形通过Glide处理) -->
             <ImageView
                 android:id="@+id/ivAvatar"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:src="@mipmap/ic_launcher_round"/>
 
             <!-- 用户名 -->
@@ -65,17 +66,17 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="6dp"
+                android:layout_marginStart="8dp"
                 android:text="用户名称"
-                android:textColor="#999999"
-                android:textSize="11sp"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
                 android:singleLine="true"/>
 
             <!-- 点赞图标 -->
             <ImageView
                 android:id="@+id/ivLikeIcon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:src="@android:drawable/btn_star_big_off"/>
 
             <!-- 点赞数 -->
@@ -83,10 +84,10 @@
                 android:id="@+id/tvLikeCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="6dp"
                 android:text="100"
-                android:textColor="#999999"
-                android:textSize="12sp"/>
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
