@@ -1,10 +1,10 @@
-package com.example.tiktokexperience;
+package com.example.tiktokexperience.Bean;
 
 public class PostItem {
     private String id; // 唯一标识，用于持久化
     private String imageUrl;
-    private String title;
-    private String userAvatar;
+    private String title;               //帖子标题
+    private String userAvatar;          //用户头像
     private String userName;
     private int baseLikeCount; // 原始点赞数（模拟服务器返回的）
 

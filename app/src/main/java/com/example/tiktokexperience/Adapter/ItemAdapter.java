@@ -10,12 +10,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.example.tiktokexperience.ViewHolder.ItemViewHolder;
-import com.example.tiktokexperience.PostItem;
+import com.example.tiktokexperience.Bean.PostItem;
 import com.example.tiktokexperience.LikeManager;
 import com.example.tiktokexperience.R;
 import java.util.List;
 
-// 这里 RecyclerView.Adapter<PostViewHolder> 会自动引用同包下的 PostViewHolder.java
+
 public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
     private Context context;
@@ -34,20 +34,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
     }
 
     public void refreshData(List<PostItem> newPosts) {
-        postList.clear();
+        postList.clear();           //先清除界面在进行添加新帖子
         postList.addAll(newPosts);
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {         //创建视图构建ViewHolder
         View view = LayoutInflater.from(context).inflate(R.layout.item_view, parent, false);
         return new ItemViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {            //将数据绑定到ViewHolder
         PostItem item = postList.get(position);
 
         // 1. 获取点赞状态
@@ -71,7 +71,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
                 .placeholder(android.R.drawable.ic_menu_gallery)
                 .into(holder.ivPostImage);
 
-        Glide.with(context)
+        Glide.with(context)             //加载用户头像
                 .load(item.getUserAvatar())
                 .transform(new CircleCrop())
                 .into(holder.ivAvatar);
@@ -92,10 +92,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
     private void updateLikeIconUI(ItemViewHolder holder, boolean isLiked) {
         if (isLiked) {
             holder.ivLikeIcon.setColorFilter(0xFFFF2C55);
-            holder.ivLikeIcon.setImageResource(android.R.drawable.star_big_on);
+            holder.ivLikeIcon.setImageResource(R.drawable.zhan_press);
         } else {
             holder.ivLikeIcon.clearColorFilter();
-            holder.ivLikeIcon.setImageResource(android.R.drawable.star_big_off);
+            holder.ivLikeIcon.setImageResource(R.drawable.zhan);
         }
     }
 
@@ -104,5 +104,5 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
         return postList.size();
     }
 
-    // 注意：这里已经删除了原本的 static class PostViewHolder
+
 }
