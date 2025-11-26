@@ -3,8 +3,11 @@ package com.example.tiktokexperience;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
-
+import android.view.Menu;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
+import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +20,7 @@ import com.example.tiktokexperience.Bean.PostItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import com.example.tiktokexperience.User.UserManager;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;      //下拉刷新
     private TextView tvHeader; // 顶部标题
-
+    // 用户管理
+    private UserManager userManager;
     private ItemAdapter adapter;
     private List<PostItem> dataList = new ArrayList<>();
 
@@ -35,12 +40,51 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        userManager = UserManager.getInstance(this);
 
+        // 如果用户未登录，显示提示
+        if (!userManager.isLoggedIn()) {
+            Toast.makeText(this, "您当前处于访客模式，点赞记录将不会保存", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "欢迎回来，" + userManager.getUsername(), Toast.LENGTH_SHORT).show();
+        }
         initViews();
         initData();
         initListeners();
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.layout.menu_main, menu);
+        // 根据登录状态更新菜单项
+        MenuItem loginItem = menu.findItem(R.id.action_login);
+        if (userManager.isLoggedIn()) {
+            loginItem.setTitle("用户: " + userManager.getUsername());
+        } else {
+            loginItem.setTitle("登录");
+        }
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_login) {
+            if (userManager.isLoggedIn()) {
+                // 如果已登录，提供登出选项
+                userManager.logout();
+                Toast.makeText(this, "已退出登录", Toast.LENGTH_SHORT).show();
+                invalidateOptionsMenu(); // 更新菜单
+            } else {
+                // 如果未登录，启动登录Activity
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     private void initViews() {
         recyclerView = findViewById(R.id.recyclerView);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
