@@ -11,7 +11,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.example.tiktokexperience.ViewHolder.ItemViewHolder;
 import com.example.tiktokexperience.Bean.PostItem;
-import com.example.tiktokexperience.LikeManager;
+import com.example.tiktokexperience.Bean.LikeManager;
 import com.example.tiktokexperience.R;
 import java.util.List;
 

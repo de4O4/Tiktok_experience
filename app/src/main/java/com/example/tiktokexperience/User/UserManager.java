@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import com.example.tiktokexperience.Data.UserDatabaseHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
 
 public class UserManager {
@@ -26,7 +26,7 @@ public class UserManager {
         loadUser();
     }
 
-    public static synchronized UserManager getInstance(Context context) {
+    public static synchronized UserManager getInstance(Context context) {       //单例模式
         if (instance == null) {
             instance = new UserManager(context.getApplicationContext());
         }
