@@ -115,7 +115,6 @@ public class UserManager {
         editor.apply();
     }
 
-    // Method to get liked posts from SharedPreferences
     public List<String> getLikedPosts() {
         String likedPostsString = sharedPreferences.getString(LIKED_POSTS_KEY, "");
         if (!likedPostsString.isEmpty()) {

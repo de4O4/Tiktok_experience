@@ -6,13 +6,17 @@ import java.util.Set;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.example.tiktokexperience.User.UserManager;
+
 public class LikeManager {
     private static final String PREF_NAME = "like_prefs";
     private SharedPreferences preferences;
     private UserManager userManager;
+
+
     public LikeManager(Context context) {
         preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         userManager = UserManager.getInstance(context);
+
     }
 
     // 获取点赞状态
@@ -32,6 +36,7 @@ public class LikeManager {
     public void setLiked(String postId, boolean isLiked) {
         if (userManager.isLoggedIn()) {
             // 如果用户已登录，保存到UserManager
+
             List<String> likedPosts = userManager.getLikedPosts();
             if (isLiked) {
                 if (!likedPosts.contains(postId)) {
@@ -41,6 +46,7 @@ public class LikeManager {
                 likedPosts.remove(postId);
             }
             userManager.saveLikedPosts(likedPosts);
+
         } else {
             // 如果用户未登录，保存到本地SharedPreferences
             preferences.edit().putBoolean(postId, isLiked).apply();

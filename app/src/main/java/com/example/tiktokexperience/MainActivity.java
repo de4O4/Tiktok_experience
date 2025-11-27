@@ -3,8 +3,7 @@ package com.example.tiktokexperience;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.example.tiktokexperience.User.UserProfileActivity;
 import androidx.annotation.NonNull;
 import android.content.Intent;
 import android.widget.Toast;
@@ -43,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         userManager = UserManager.getInstance(this);
         BottomNavigationView navView = findViewById(R.id.nav_view);
+        setupBottomNavigation(navView);
         initViews();
         initData();
         initListeners();
@@ -59,20 +59,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    private void updateBottomMenuState() {
-//        if (navView == null) return;
-//
-//        Menu menu = navView.getMenu();
-//        MenuItem meItem = menu.findItem(R.id.navigation_home); // 确保这里ID和你 menu xml 里的一致
-//
-//        if (userManager.isLoggedIn()) {
-//            meItem.setTitle("用户: " + userManager.getUsername());
-//           // meItem.setIcon(R.drawable.ic_user_logged_in); // 可选：登录后换个图标
-//        } else {
-//            meItem.setTitle("登录"); // 或者 "我的"
-//           // meItem.setIcon(R.drawable.ic_user_normal); // 可选：换回默认图标
-//        }
-//    }
+    private void setupBottomNavigation(BottomNavigationView navView) {
+        navView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.navigation_home) {
+                // 首页，什么都不做，保持当前页面
+                return true;
+            } else if (itemId == R.id.action_login) {
+                // 点击"我的"，根据登录状态决定跳转
+                if (userManager.isLoggedIn()) {
+                    // 已登录，跳转到用户个人中心
+                    Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
+                    startActivity(intent);
+                } else {
+                    // 未登录，跳转到登录界面
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+                return true;
+            }
+            return false;
+        });
+    }
 
 
     private void initViews() {
@@ -169,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < count; i++) {
             int realIndex = startIndex + i;
             // ID 用于持久化点赞状态
-            String id = "post_" + realIndex;
+            String id = "post_" + realIndex+random;
             long randomStamp = System.currentTimeMillis() + i;
 
 
