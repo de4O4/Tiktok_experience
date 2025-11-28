@@ -102,7 +102,6 @@ public class UserManager {
         }
     }
 
-    // Method to save liked posts to SharedPreferences
     public void saveLikedPosts(List<String> likedPostIds) {
         // 将列表转换为逗号分隔的字符串
         StringBuilder sb = new StringBuilder();

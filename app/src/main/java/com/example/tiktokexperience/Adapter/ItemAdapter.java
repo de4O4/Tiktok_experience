@@ -16,16 +16,19 @@ import com.example.tiktokexperience.R;
 import java.util.List;
 
 
+
 public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
     private Context context;
     private List<PostItem> postList;
     private LikeManager likeManager;
 
+
     public ItemAdapter(Context context, List<PostItem> postList) {
         this.context = context;
         this.postList = postList;
         this.likeManager = new LikeManager(context);
+
     }
 
     public void addData(List<PostItem> newPosts) {
@@ -80,8 +83,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
         holder.ivLikeIcon.setOnClickListener(v -> {
             boolean currentStatus = likeManager.isLiked(item.getId());
             boolean newStatus = !currentStatus;
-
-            likeManager.setLiked(item.getId(), newStatus);
+            likeManager.setLikedWithPostInfo(item.getId(), newStatus, item);
 
             int newCount = item.getBaseLikeCount() + (newStatus ? 1 : 0);
             holder.tvLikeCount.setText(String.valueOf(newCount));

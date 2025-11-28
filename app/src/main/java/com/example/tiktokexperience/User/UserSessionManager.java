@@ -1,4 +1,4 @@
-package com.example.tiktokexperience.Data;
+package com.example.tiktokexperience.User;
 
 import android.content.Context;
 import android.content.SharedPreferences;

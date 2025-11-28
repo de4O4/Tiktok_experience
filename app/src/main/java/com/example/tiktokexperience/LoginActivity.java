@@ -7,10 +7,9 @@ import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tiktokexperience.Bean.LikeManager;
 import com.google.android.material.textfield.TextInputEditText;
 import com.example.tiktokexperience.User.UserManager;
-import com.example.tiktokexperience.Data.UserSessionManager;
+import com.example.tiktokexperience.User.UserSessionManager;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -93,8 +92,8 @@ public class LoginActivity extends AppCompatActivity {
             sessionManager.createLoginSession(username);
 
             // 同步本地点赞数据到用户账户
-            LikeManager likeManager = new LikeManager(this);
-            likeManager.syncLocalToUser();
+            //LikeManager likeManager = new LikeManager(this);
+           // likeManager.syncLocalToUser();
 
             // 登录成功后返回主界面
             setResult(RESULT_OK);
