@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Random;
 import com.example.tiktokexperience.User.UserManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.tiktokexperience.Optimize.PreloadManager;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -134,6 +135,22 @@ public class MainActivity extends AppCompatActivity {
         // 加载更多 (简单版)
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // 获取可见的最后项目位置
+                if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+                    StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) recyclerView.getLayoutManager();
+                    int[] lastVisiblePositions = layoutManager.findLastVisibleItemPositions(null);
+                    int lastVisiblePos = Math.max(lastVisiblePositions[0], lastVisiblePositions[1]);
+
+                    // 当滚动到接近底部时预加载下一批数据
+                    if (lastVisiblePos >= adapter.getItemCount() - 5) { // 距离底部5个item时开始预加载
+                        preloadNextBatchIfNeeded();
+                    }
+                }
+            }
+            @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 if (!recyclerView.canScrollVertically(1)) {         //若已滚动到最后
                     // 获取当前最后一条的索引用于生成唯一ID
@@ -155,10 +172,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        generateMockDataAsync(20, 0, newData -> {
-            adapter.refreshData(newData);
-        });
+        // 检查是否有预加载的数据
+        PreloadManager preloadManager = PreloadManager.getInstance(this);
+        List<PostItem> preloadedData = preloadManager.getPreloadedData();
 
+        if (preloadedData != null && !preloadedData.isEmpty()) {
+            // 使用预加载的数据
+            List<PostItem> dataToUse = new ArrayList<>();
+            // 取前20条数据，或者全部预加载的数据（如果少于20条）
+            int count = Math.min(20, preloadedData.size());
+            for (int i = 0; i < count; i++) {
+                dataToUse.add(preloadedData.get(i));
+            }
+            adapter.refreshData(dataToUse);
+
+            // 同时在后台继续加载更多数据
+            loadMoreDataInBackground(preloadedData.size());
+        } else {
+            // 如果没有预加载数据，使用原来的逻辑
+            generateMockDataAsync(20, 0, newData -> {
+                adapter.refreshData(newData);
+            });
+        }
+    }
+
+    private void loadMoreDataInBackground(int startIndex) {
+        generateMockDataAsync(20, startIndex, moreData -> {
+            adapter.addData(moreData);
+        });
+    }
+
+    // 预加载下一批数据（如果需要）
+    private boolean isPreloadingNextBatch = false; // 防止重复预加载
+
+    private void preloadNextBatchIfNeeded() {
+        if (isPreloadingNextBatch) {
+            return; // 防止重复预加载
+        }
+
+        isPreloadingNextBatch = true;
+
+        PreloadManager preloadManager = PreloadManager.getInstance(this);
+        preloadManager.preloadNextBatch(10, data -> {
+            // 将预加载的数据添加到适配器中，为后续滚动做准备
+            adapter.addData(data);
+            isPreloadingNextBatch = false;
+        });
     }
     private String fetchImageUrlFromAPI() {
         try {

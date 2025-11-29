@@ -6,9 +6,7 @@ import android.os.Handler;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import com.example.tiktokexperience.Optimize.PreloadManager;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -16,13 +14,16 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        new Handler().postDelayed(() -> {
-            // 启动主界面
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-            startActivity(intent);
-            // 关闭启动页
-            finish();
-        }, 2000); // 2秒延迟
+        PreloadManager preloadManager = PreloadManager.getInstance(this);
+        preloadManager.preloadData(15, data -> {
+            // 预加载完成后启动主界面
+            new Handler().postDelayed(() -> {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }, 1500); // 给用户一点视觉反馈时间
+        });
     }
+
 
 }
