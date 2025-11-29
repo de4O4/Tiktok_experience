@@ -59,9 +59,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "欢迎回来，" + userManager.getUsername(), Toast.LENGTH_SHORT).show();
         }
-        initViews();
-        initData();
-        initListeners();
+
     }
 
 
@@ -157,7 +155,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        adapter.refreshData(generateMockData(20, 0));
+        generateMockDataAsync(20, 0, newData -> {
+            adapter.refreshData(newData);
+        });
 
     }
     private String fetchImageUrlFromAPI() {
@@ -189,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             // 如果API调用失败，返回一个默认图片URL
-            return "https://api.btstu.cn/sjbz/api.php?lx=dongman&v=1&t=" + System.currentTimeMillis();
+           // return "https://api.btstu.cn/sjbz/api.php?lx=dongman&v=1&t=" + System.currentTimeMillis();
+            return "https://c-ssl.duitang.com/uploads/blog/202510/04/OoSz2d9Gs6b8Wg6.jpg";
         }
     }
     // 生成 Mock 数据 (必须保证 ID 稳定，以便测试持久化)
