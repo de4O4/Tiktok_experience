@@ -55,7 +55,7 @@ public class UserManager {
         if (currentUser != null) {
             currentUser.setLoggedIn(false);
         }
-        // Clear login status but keep liked posts
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(IS_LOGGED_IN_KEY, false);
         editor.putString(USERNAME_KEY, "");
@@ -103,7 +103,6 @@ public class UserManager {
     }
 
     public void saveLikedPosts(List<String> likedPostIds) {
-        // 将列表转换为逗号分隔的字符串
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < likedPostIds.size(); i++) {
             if (i > 0) sb.append(",");
@@ -117,7 +116,6 @@ public class UserManager {
     public List<String> getLikedPosts() {
         String likedPostsString = sharedPreferences.getString(LIKED_POSTS_KEY, "");
         if (!likedPostsString.isEmpty()) {
-            // 将逗号分隔的字符串转换回列表
             String[] ids = likedPostsString.split(",");
             List<String> result = new ArrayList<>();
             for (String id : ids) {

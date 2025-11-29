@@ -39,8 +39,8 @@ public class PreloadManager {
         return instance;
     }
 
-    // 预加载帖子数据
-    public void preloadData(int count, PreloadCallback callback) {
+
+    public void preloadData(int count, PreloadCallback callback) {          // 预加载帖子数据
         if (isPreloaded) {
             callback.onPreloadComplete(preloadData);
             return;
@@ -51,7 +51,7 @@ public class PreloadManager {
             preloadData.clear();
             preloadData.addAll(list);
             isPreloaded = true;
-            // 预加载图片
+
             preloadImages(list);
 
             // 在主线程回调
@@ -64,7 +64,7 @@ public class PreloadManager {
         });
     }
 
-    // 生成预加载数据
+
     private List<PostItem> generatePreloadData(int count) {
         List<PostItem> list = new ArrayList<>();
         Random random = new Random();
@@ -90,7 +90,6 @@ public class PreloadManager {
             String qqNum = String.valueOf(100000000 + random.nextInt(899999999));
             String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + qqNum + "&s=100";
 
-            // 从API获取图片URL
             String imageUrl = fetchImageUrlFromAPI();
 
             String title = titles[random.nextInt(titles.length)];
@@ -107,8 +106,8 @@ public class PreloadManager {
         return list;
     }
 
-    // 预加载图片资源
-    private void preloadImages(List<PostItem> postItems) {
+
+    private void preloadImages(List<PostItem> postItems) {      // 预加载图片资源
         Log.d(TAG, "开始预加载图片，数量: " + postItems.size());
         for (PostItem item : postItems) {
             // 预加载帖子图片
@@ -125,17 +124,14 @@ public class PreloadManager {
         }
     }
 
-    // 预加载下一批数据，用于无缝滚动体验
+
     public void preloadNextBatch(int count, PreloadCallback callback) {
         Log.d(TAG, "开始预加载下一批数据，数量: " + count);
         networkExecutor.execute(() -> {
             List<PostItem> list = generatePreloadData(count);
-
-            // 预加载图片
             preloadImages(list);
 
-            // 在主线程回调
-            if (context != null) {
+            if (context != null) {        // 在主线程回调
                 android.os.Handler mainHandler = new android.os.Handler(context.getMainLooper());
                 mainHandler.post(() -> {
                     callback.onPreloadComplete(list);
@@ -144,24 +140,7 @@ public class PreloadManager {
         });
     }
 
-    // 检查特定URL是否已缓存
-    public boolean isImageCached(String imageUrl) {
-        // 这里可以使用Glide的缓存检查功能
-        // 为了简化，返回false，实际应用中可以实现更复杂的缓存检查
-        return false;
-    }
 
-    // 清除特定缓存
-    public void clearCache() {
-        if (context != null) {
-            Glide.get(context).clearMemory();
-            networkExecutor.execute(() -> {
-                Glide.get(context).clearDiskCache();
-            });
-        }
-    }
-
-    // 从API获取图片URL
     private String fetchImageUrlFromAPI() {
         try {
             URL url = new URL("https://img.xjh.me/random_img.php?return=json");
@@ -182,7 +161,6 @@ public class PreloadManager {
             JSONObject jsonResponse = new JSONObject(response.toString());
             String imgPath = jsonResponse.getString("img");
 
-            // 如果imgPath以//开头，需要添加https:
             if (imgPath.startsWith("//")) {
                 imgPath = "https:" + imgPath;
             }
@@ -194,20 +172,9 @@ public class PreloadManager {
         }
     }
 
-    // 获取预加载的数据
-    public List<PostItem> getPreloadedData() {
+
+    public List<PostItem> getPreloadedData() {          // 获取预加载的数据
         return isPreloaded ? new ArrayList<>(preloadData) : null;
-    }
-
-    // 检查是否已完成预加载
-    public boolean isPreloaded() {
-        return isPreloaded;
-    }
-
-    // 清除预加载数据
-    public void clearPreloadedData() {
-        preloadData.clear();
-        isPreloaded = false;
     }
 
     public interface PreloadCallback {

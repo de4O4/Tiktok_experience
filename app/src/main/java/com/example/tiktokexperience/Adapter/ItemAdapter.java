@@ -53,33 +53,32 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {            //将数据绑定到ViewHolder
         PostItem item = postList.get(position);
 
-        // 1. 获取点赞状态
-        boolean isLiked = likeManager.isLiked(item.getId());
 
-        // 2. 计算显示数字
-        int currentLikeCount = item.getBaseLikeCount() + (isLiked ? 1 : 0);
+        boolean isLiked = likeManager.isLiked(item.getId());    // 获取点赞状态
 
-        // 3. 绑定数据
+
+        int currentLikeCount = item.getBaseLikeCount() + (isLiked ? 1 : 0);             // 2计算显示数字
+
+
         holder.tvTitle.setText(item.getTitle());
         holder.tvUserName.setText(item.getUserName());
         holder.tvLikeCount.setText(String.valueOf(currentLikeCount));
 
-        // 4. 更新 UI 状态
-        updateLikeIconUI(holder, isLiked);
 
-        // 5. 图片加载
+        updateLikeIconUI(holder, isLiked);           //更新 UI 状态
+
+
         Glide.with(context)
                 .load(item.getImageUrl())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(android.R.drawable.ic_menu_gallery)
                 .into(holder.ivPostImage);
 
-        Glide.with(context)             //加载用户头像
+        Glide.with(context)
                 .load(item.getUserAvatar())
                 .transform(new CircleCrop())
                 .into(holder.ivAvatar);
 
-        // 6. 点击逻辑
         holder.ivLikeIcon.setOnClickListener(v -> {
             boolean currentStatus = likeManager.isLiked(item.getId());
             boolean newStatus = !currentStatus;
@@ -105,6 +104,5 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
     public int getItemCount() {
         return postList.size();
     }
-
 
 }

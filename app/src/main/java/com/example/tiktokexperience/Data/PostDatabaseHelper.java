@@ -58,7 +58,7 @@ public class PostDatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    // 检查帖子是否已存在于数据库中
+
     public boolean isPostExists(String postId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_POSTS + " WHERE " + COLUMN_POST_ID + "=?";
@@ -70,7 +70,6 @@ public class PostDatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
-    // 如果帖子不存在则保存帖子信息
     public boolean savePostIfNotExists(PostItem postItem) {
         if (!isPostExists(postItem.getId())) {
             return savePost(postItem);

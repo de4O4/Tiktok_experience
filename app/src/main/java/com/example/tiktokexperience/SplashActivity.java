@@ -16,12 +16,12 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         PreloadManager preloadManager = PreloadManager.getInstance(this);
         preloadManager.preloadData(15, data -> {
-            // 预加载完成后启动主界面
-            new Handler().postDelayed(() -> {
+
+            new Handler().postDelayed(() -> {           // 预加载完成后启动主界面
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
-            }, 1500); // 给用户一点视觉反馈时间
+            }, 1500);
         });
     }
 

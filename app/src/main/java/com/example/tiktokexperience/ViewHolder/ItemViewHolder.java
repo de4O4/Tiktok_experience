@@ -18,7 +18,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
     public ItemViewHolder(@NonNull View itemView) {
         super(itemView);
-        // 绑定 item_post.xml 中的控件
+
         ivPostImage = itemView.findViewById(R.id.ivPostImage);
         tvTitle = itemView.findViewById(R.id.tvTitle);
         ivAvatar = itemView.findViewById(R.id.ivAvatar);

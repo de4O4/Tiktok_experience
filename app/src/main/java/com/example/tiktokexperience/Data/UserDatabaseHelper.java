@@ -39,7 +39,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // 注册新用户
+
     public boolean addUser(String username, String password, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -52,7 +52,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    // 验证用户登录
+
     public boolean validateUser(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_USERS + " WHERE " +
@@ -65,7 +65,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         return isValid;
     }
 
-    // 检查用户名是否已存在
     public boolean isUsernameExists(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_USERNAME + "=?";

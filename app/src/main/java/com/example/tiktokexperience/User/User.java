@@ -5,9 +5,6 @@ public class User {
     private String email;
     private boolean isLoggedIn;
 
-    public User() {
-        // Default constructor required for Firebase
-    }
 
     public User(String username, String email) {
         this.username = username;
