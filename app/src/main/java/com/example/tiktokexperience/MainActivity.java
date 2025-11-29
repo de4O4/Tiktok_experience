@@ -7,7 +7,13 @@ import com.example.tiktokexperience.User.UserProfileActivity;
 import androidx.annotation.NonNull;
 import android.content.Intent;
 import android.widget.Toast;
-
+import org.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private UserManager userManager;
     private ItemAdapter adapter;
     private List<PostItem> dataList = new ArrayList<>();
-
+    private ExecutorService networkExecutor = Executors.newFixedThreadPool(5);
     // 布局状态标记
     private boolean isStaggered = true;
 
@@ -121,11 +127,10 @@ public class MainActivity extends AppCompatActivity {
     private void initListeners() {
         // 刷新逻辑
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            new Handler().postDelayed(() -> {
-                // 刷新时生成带 ID 的数据
-                adapter.refreshData(generateMockData(10, 0));
+            generateMockDataAsync(10, 0, newData -> {
+                adapter.refreshData(newData);
                 swipeRefreshLayout.setRefreshing(false);
-            }, 1000);
+            });
         });
 
         // 加载更多 (简单版)
@@ -135,8 +140,9 @@ public class MainActivity extends AppCompatActivity {
                 if (!recyclerView.canScrollVertically(1)) {         //若已滚动到最后
                     // 获取当前最后一条的索引用于生成唯一ID
                     int currentSize = adapter.getItemCount();
-                    List<PostItem> more = generateMockData(6, currentSize);
-                    adapter.addData(more);
+                    generateMockDataAsync(6, currentSize, moreData -> {
+                        adapter.addData(moreData);
+                    });
                 }
             }
         });
@@ -154,7 +160,38 @@ public class MainActivity extends AppCompatActivity {
         adapter.refreshData(generateMockData(20, 0));
 
     }
+    private String fetchImageUrlFromAPI() {
+        try {
+            URL url = new URL("https://img.xjh.me/random_img.php?return=json");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
 
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            connection.disconnect();
+
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            String imgPath = jsonResponse.getString("img");
+
+            // 如果imgPath以//开头，需要添加https:
+            if (imgPath.startsWith("//")) {
+                imgPath = "https:" + imgPath;
+            }
+
+            return imgPath;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 如果API调用失败，返回一个默认图片URL
+            return "https://api.btstu.cn/sjbz/api.php?lx=dongman&v=1&t=" + System.currentTimeMillis();
+        }
+    }
     // 生成 Mock 数据 (必须保证 ID 稳定，以便测试持久化)
     // 生成 Mock 数据 (使用 Picsum 生成无限不重复图片)
 // 生成 Mock 数据 (中国大陆专用版)
@@ -186,14 +223,8 @@ public class MainActivity extends AppCompatActivity {
             String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + qqNum + "&s=100";
 
 
-            String imageUrl;
-            if (i % 2 == 0) {
-                // 偶数个用 动漫/风景 (横屏或方图居多)
-                imageUrl = "https://api.btstu.cn/sjbz/api.php?lx=dongman&v=" + realIndex+ "&t=" + randomStamp;
-            } else {
-                // 奇数个用 手机壁纸 (竖屏，适合瀑布流)
-                imageUrl = "https://api.btstu.cn/sjbz/api.php?method=mobile&format=images&v=" + realIndex+ "&t=" + randomStamp;
-            }
+            // 使用新的API获取图片URL
+            String imageUrl = fetchImageUrlFromAPI();
 
             String title = titles[random.nextInt(titles.length)];
 
@@ -207,5 +238,55 @@ public class MainActivity extends AppCompatActivity {
             ));
         }
         return list;
+    }
+    private void generateMockDataAsync(int count, int startIndex, DataCallback callback) {
+        networkExecutor.execute(() -> {
+            List<PostItem> list = new ArrayList<>();
+            Random random = new Random();
+
+            String[] titles = {
+                    "上海看展｜这个展真的太好拍了！",
+                    "今日份OOTD，显瘦穿搭分享",
+                    "沉浸式护肤，又是精致的一天",
+                    "猫咪迷惑行为大赏 #萌宠",
+                    "家常菜做法，简单又好吃",
+                    "深圳周末去哪儿？小众打卡地",
+                    "这是什么神仙颜值！爱了爱了",
+                    "打工人日常，今天也要加油鸭",
+                    "数码博主：iPhone 19 爆料汇总",
+                    "旅行 Vlog | 去有风的地方"
+            };
+
+            for (int i = 0; i < count; i++) {
+                int realIndex = startIndex + i;
+                // ID 用于持久化点赞状态
+                String id = "post_" + realIndex + random;
+                long randomStamp = System.currentTimeMillis() + i;
+
+                String qqNum = String.valueOf(100000000 + random.nextInt(899999999));
+                String avatarUrl = "https://q1.qlogo.cn/g?b=qq&nk=" + qqNum + "&s=100";
+
+                // 从API获取图片URL
+                String imageUrl = fetchImageUrlFromAPI();
+
+                String title = titles[random.nextInt(titles.length)];
+
+                list.add(new PostItem(
+                        id,
+                        imageUrl,
+                        title,
+                        avatarUrl,
+                        "用户_" + qqNum.substring(0, 4), // 模拟用户名
+                        random.nextInt(2000) + 50 // 随机点赞数
+                ));
+            }
+
+            runOnUiThread(() -> callback.onDataReady(list));
+        });
+    }
+
+    // 回调接口
+    interface DataCallback {
+        void onDataReady(List<PostItem> data);
     }
 }
