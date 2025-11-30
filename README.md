@@ -52,7 +52,7 @@ TikTokExperience/
 - **启动页面 (SplashActivity)**: 应用的入口点，作为启动屏展示
 - **用户注册 (RegisterActivity)**: 新用户注册功能
 - **用户登录 (LoginActivity)**: 用户身份验证功能
-- **主界面 (MainActivity)**: 核心功能界面，可能包含内容浏览
+- **主界面 (MainActivity)**: 核心功能界面，包含内容浏览，实现了单双列切换布局
 - **用户资料 (UserProfileActivity)**: 管理和查看用户个人资料
 - **网络访问**: 应用具有互联网访问权限
 - **数据管理**: 包含用户和帖子数据的数据库管理功能
@@ -64,7 +64,6 @@ TikTokExperience/
 ## 应用架构
 
 - **Application 类**: TikTokApplication (位于 .Optimize 包中)
-- **主题**: 使用 Theme.TiktokExperience 主题
 - **权限**: 需要互联网访问权限 (android.permission.INTERNET)
 
 ## 活动 (Activities)
