@@ -83,7 +83,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 确保用户登录状态在返回时得到正确处理
+        if (!userManager.isLoggedIn()) {
+            Toast.makeText(this, "您当前处于访客模式，点赞记录将不会保存", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "欢迎回来，" + userManager.getUsername(), Toast.LENGTH_SHORT).show();
+        }
+    }
     private void initViews() {
         recyclerView = findViewById(R.id.recyclerView);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);

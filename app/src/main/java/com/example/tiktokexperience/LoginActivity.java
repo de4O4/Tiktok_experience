@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.example.tiktokexperience.User.UserManager;
 import com.example.tiktokexperience.User.UserSessionManager;
+import com.example.tiktokexperience.Data.UserDatabaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -79,7 +80,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (userManager.validateUser(username, password)) {
             Toast.makeText(this, "登录成功！欢迎 " + username, Toast.LENGTH_SHORT).show();
-            sessionManager.createLoginSession(username);
+            UserDatabaseHelper dbHelper = new UserDatabaseHelper(this);
+            userManager.login(username, dbHelper.getUserEmail(username)); // 获取用户邮
             setResult(RESULT_OK);
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);

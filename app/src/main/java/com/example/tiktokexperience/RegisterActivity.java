@@ -76,7 +76,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         boolean isAdded = userManager.addUser(username, password, email);
         if (isAdded) {
-            Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "注册成功，已自动登录", Toast.LENGTH_SHORT).show();
+            // 注册成功后自动登录用户
+            userManager.login(username, email);
             finish();
         } else {
             Toast.makeText(this, "注册失败，请重试", Toast.LENGTH_SHORT).show();
