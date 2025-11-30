@@ -10,12 +10,8 @@ public class TikTokApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "TikTokApplication onCreate");
-
         PreloadManager preloadManager = PreloadManager.getInstance(this);
-
-        preloadManager.preloadData(12, data -> {
-            Log.d(TAG, "预加载完成，共加载 " + data.size() + " 条数据");
+        preloadManager.preloadData(10, data -> {
         });
     }
 

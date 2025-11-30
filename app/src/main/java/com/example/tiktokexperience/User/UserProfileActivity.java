@@ -17,13 +17,10 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_userprofile);
         initViews();
 
-        // 获取UserManager实例
         userManager = UserManager.getInstance(this);
 
-        // 更新UI显示用户信息
         updateUserInfo();
 
-        // 设置退出登录按钮点击事件
         setupLogoutButton();
     }
 

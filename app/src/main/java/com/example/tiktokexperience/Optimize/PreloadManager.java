@@ -107,7 +107,7 @@ public class PreloadManager {
     }
 
 
-    private void preloadImages(List<PostItem> postItems) {      // 预加载图片资源
+    private void preloadImages(List<PostItem> postItems) {
         Log.d(TAG, "开始预加载图片，数量: " + postItems.size());
         for (PostItem item : postItems) {
             // 预加载帖子图片

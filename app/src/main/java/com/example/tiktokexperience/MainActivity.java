@@ -54,11 +54,6 @@ public class MainActivity extends AppCompatActivity {
         initData();
         initListeners();
 
-        if (!userManager.isLoggedIn()) {
-            Toast.makeText(this, "您当前处于访客模式，点赞记录将不会保存", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "欢迎回来，" + userManager.getUsername(), Toast.LENGTH_SHORT).show();
-        }
 
     }
 
